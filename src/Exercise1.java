@@ -1,17 +1,27 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Exercise1 {
 
     public static void main(String[] args) {
-
-
+        List<Animal> myPets = inputUser();
+        Print(myPets);
     }
 
-    public static void inputUser() {
+    public static void Print(List<Animal> pets){
+
+        String result = pets.stream()
+                .map(Animal::toString)
+                .collect(Collectors.joining("\n"));
+
+        System.out.println(result);
+    }
+
+    public static List<Animal> inputUser() {
         Scanner scanner = new Scanner(System.in);
-        List<String> pets = new ArrayList<>();
+        List<Animal> pets = new ArrayList<>();
         int num;
         while (true) {
             try {
@@ -25,31 +35,37 @@ public class Exercise1 {
 
         while (pets.size() < num) {
             String userInputAnimal = scanner.nextLine();
-            if (userInputAnimal.equals("dog") || userInputAnimal.equals("cat")) {
+            if (userInputAnimal.equalsIgnoreCase("dog") || userInputAnimal.equalsIgnoreCase("cat")) {
                 try {
+                    String userInputName = scanner.nextLine();
                     int userInputAge = scanner.nextInt();
+                    scanner.nextLine();
                     if (userInputAge <= 0) {
                         System.out.println("Incorrect input. Age <= 0");
+                        num -= 1;
                     } else {
-                        if (userInputAnimal.equals("dog")){
-                            super.
+                        if (userInputAnimal.equalsIgnoreCase("dog")){
+                            Dog dog = new Dog(userInputName, userInputAge);
+                            pets.add(dog);
+                        } else {
+                            Cat cat = new Cat(userInputName, userInputAge);
+                            pets.add(cat);
                         }
-                        pets.add()
                     }
-
                 } catch (Exception e) {
                     System.out.println("Could not parse a number. Please, try again");
                 }
             } else {
                 System.out.println("Incorrect input. Unsupported pet type");
+                num -= 1;
             }
 
         }
-
+        return pets;
     }
 
 
-    public abstract class Animal {
+    public abstract static class Animal {
         private String name;
         private int age;
 
@@ -68,7 +84,7 @@ public class Exercise1 {
 }
 
 
-    public class Dog extends Animal{
+    public static class Dog extends Animal{
         public Dog(String name, int age) {
             super(name, age);
     }
@@ -78,7 +94,7 @@ public class Exercise1 {
         }
     }
 
-    public class Cat extends Animal{
+    public static class Cat extends Animal{
         public Cat(String name, int age){
             super(name, age);
         }
