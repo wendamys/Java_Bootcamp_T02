@@ -12,9 +12,14 @@ public class Exercise3 {
 
     public static void Print(List<Animal> pets){
 
-
-
         String result = pets.stream()
+                .sorted((a, b) -> {
+                    boolean aHunts = a instanceof Omnivore;
+                    boolean bHunts = b instanceof Omnivore;
+
+                    if (aHunts == bHunts) return 0;
+                    return aHunts ? 1 : -1;
+                })
                 .map(Animal::toString)
                 .collect(Collectors.joining("\n"));
 
