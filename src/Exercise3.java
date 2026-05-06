@@ -12,6 +12,8 @@ public class Exercise3 {
 
     public static void Print(List<Animal> pets){
 
+
+
         String result = pets.stream()
                 .map(Animal::toString)
                 .collect(Collectors.joining("\n"));
@@ -35,7 +37,7 @@ public class Exercise3 {
 
         while (pets.size() < num) {
             String userInputAnimal = scanner.nextLine();
-            if (userInputAnimal.equalsIgnoreCase("dog") || userInputAnimal.equalsIgnoreCase("cat")) {
+            if (userInputAnimal.equals("dog") || userInputAnimal.equals("cat") || userInputAnimal.equals("hamster") || userInputAnimal.equals("guinea")) {
                 try {
                     String userInputName = scanner.nextLine();
                     int userInputAge = scanner.nextInt();
@@ -44,12 +46,23 @@ public class Exercise3 {
                         System.out.println("Incorrect input. Age <= 0");
                         num -= 1;
                     } else {
-                        if (userInputAnimal.equalsIgnoreCase("dog")){
-                            Dog dog = new Dog(userInputName, userInputAge);
-                            pets.add(dog);
-                        } else {
-                            Cat cat = new Cat(userInputName, userInputAge);
-                            pets.add(cat);
+                        switch (userInputAnimal) {
+                            case "dog" -> {
+                                Dog dog = new Dog(userInputName, userInputAge);
+                                pets.add(dog);
+                            }
+                            case "hamster" -> {
+                                Hamster hamster = new Hamster(userInputName, userInputAge);
+                                pets.add(hamster);
+                            }
+                            case "guinea" -> {
+                                GuineaPig guineapig = new GuineaPig(userInputName, userInputAge);
+                                pets.add(guineapig);
+                            }
+                            default -> {
+                                Cat cat = new Cat(userInputName, userInputAge);
+                                pets.add(cat);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -125,15 +138,32 @@ public class Exercise3 {
         }
     }
 
-    public static class Hamster {
-        private String name;
-        private int age;
-
+    public static class Hamster extends Animal implements Harbilove {
         public Hamster(String name, int age){
-            this.name = name;
-            this.age = age;
+            super(name, age);
         }
 
+        public String chill(){
+            return "I can chill for 8 hours";
+        }
+
+        public String toString(){
+            return "Hamster name = " + getName() + ", age = " + getAge() + " " + chill();
+        }
+    }
+
+    public static class GuineaPig extends Animal implements Harbilove {
+        public GuineaPig(String name, int age){
+            super(name, age);
+        }
+
+        public String chill(){
+           return "I can chill for 12 hours";
+        }
+
+        public String toString(){
+            return "GuineaPig name = " + getName() + ", age = " + getAge() + " " + chill();
+        }
     }
 }
 
