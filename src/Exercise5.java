@@ -92,7 +92,9 @@ public class Exercise5 {
                 double time = (getAge() * 0.5);
                 try {
                     TimeUnit.MILLISECONDS.sleep((long) (time * 1000));
-                } catch (Exception ignored) {}
+                } catch (Exception exception) {
+                    Thread.currentThread().interrupt();
+                }
                 return time;
             }
         }
@@ -106,7 +108,9 @@ public class Exercise5 {
                 double time = (getAge() * 0.25);
                 try {
                     TimeUnit.MILLISECONDS.sleep((long) (time * 1000));
-                } catch (Exception ignored) {}
+                } catch (Exception exception) {
+                    Thread.currentThread().interrupt();
+                }
                 return time;
             }
         }
