@@ -1,35 +1,37 @@
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class Exercise5 {
-
         public static void main(String[] args) {
+            Instant startProgram = Instant.now();
             List<Animal> myPets = inputUser();
-            long programStart = System.currentTimeMillis();
+            List<Thread> threads = new ArrayList<>();
             for (Animal s: myPets){
-                Thread p1 = new Thread(() -> {
-                    double startTime = (System.currentTimeMillis() - programStart) / 1000.0;
-                    long timeWalk = s.goToWalk();
-                    try {
-                        TimeUnit.SECONDS.sleep(timeWalk);
-                    } catch (Exception InterruptedException) {
-                    }
-                    double endTime = (System.currentTimeMillis() - programStart) / 1000.0;
-                    System.out.printf("%.2f%n", endTime - startTime);
+                Thread t = new Thread(() -> {
+                    Instant walkStart = Instant.now();
+                    double startTime = Duration.between(startProgram, walkStart).toMillis() / 1000.0;
+                    s.goToWalk();
+                    Instant walkEnd = Instant.now();
+                    double endTime = Duration.between(startProgram, walkEnd).toMillis() / 1000.0;
+                    System.out.println(s.getClass().getSimpleName()
+                            + " name = "
+                            + s.getName()
+                            + ", age = " + s.getAge() + ", start time = "
+                            + String.format(Locale.US, "%.2f", startTime) + ", end time = "
+                            + String.format(Locale.US,"%.2f", endTime));
                 });
-                p1.start();
+                threads.add(t);
+                t.start();
             }
-
-            printPets(myPets);
-        }
-
-        public static void printPets(List<Animal> pets){
-            String result = pets.stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining("\n"));
-
-            System.out.println(result);
+            try {
+                for (Thread t : threads) {
+                    t.join();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public static List<Animal> inputUser() {
@@ -73,41 +75,39 @@ public class Exercise5 {
             private final String name;
             private final int age;
 
-            public Animal(String name, int age) {
+            public Animal(String name, int age){
                 this.name = name;
                 this.age = age;
             }
 
             public String getName() { return name; }
             public int getAge() { return age; }
-            public void goToWalk() {}
-
+            public double goToWalk() { return 1; }
         }
 
         public static class Dog extends Animal {
             public Dog(String name, int age) { super(name, age); }
             @Override
-            public String toString() { return "Dog name = " + getName() + ", age = " + getAge() + ", start time = " + goToWalk() + ", end time = " + goToWalk(); }
-            @Override
-            public void goToWalk(){ return (long) (getAge() * 0.5); }
+            public double goToWalk() {
+                double time = (getAge() * 0.5);
+                try {
+                    TimeUnit.MILLISECONDS.sleep((long) (time * 1000));
+                } catch (Exception ignored) {}
+                return time;
+            }
         }
 
         public static class Cat extends Animal {
             public Cat(String name, int age) {
                 super(name, age);
             }
-
             @Override
-            public String toString() {
-                return "Cat name = " + getName() + ", age = " + getAge() + ", start time = " + goToWalk() + ", end time = " + goToWalk();
-            }
-
-            @Override
-            public void goToWalk() {
-                long time = goToWalk() * 0.25;
+            public double goToWalk() {
+                double time = (getAge() * 0.25);
                 try {
-                    TimeUnit.SECONDS.sleep(time);
-                } catch (Exception InterruptedException) {}
+                    TimeUnit.MILLISECONDS.sleep((long) (time * 1000));
+                } catch (Exception ignored) {}
+                return time;
             }
         }
     }
